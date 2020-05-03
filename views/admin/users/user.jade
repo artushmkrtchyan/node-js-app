@@ -1,0 +1,13 @@
+extends ../../layout
+
+block content
+    .container
+        ul
+            if user
+                li #{user.firstName}
+                li #{user.lastName}
+                li #{user.email}
+                li: img(src=`/${user.avatar}`)
+                li: form(action='/admin/users/'+user.id+'/edit' enctype="multipart/form-data" method="post")
+                    input(type="file" name="avatar")
+                    button(type="submit")

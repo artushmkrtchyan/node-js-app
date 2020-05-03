@@ -1,0 +1,24 @@
+extends ../../layout
+
+block content
+    .container
+        table#pickle.table.table-hover.table-striped.table-bordered
+            thead
+                tr
+                    th #
+                    th First Name
+                    th Last Name
+                    th Battery
+                    th
+            tbody
+               - each user, i in users
+                tr
+                    th(scope='row')= i+1
+                    td: a(href="users/"+user.id) #{user.firstName}
+                    td= user.lastName
+                    td #{user.email}
+                    td: form(method='post' action='/admin/users/'+user.id+'/delete')
+                        button(type='submit').glyphicon(class="glyphicon-trash text-danger", aria-hidden="true")
+        li: form(action='/admin/users/upload' enctype="multipart/form-data" method="post")
+            input(type="file" name="avatar" multiple)
+            button(type="submit")

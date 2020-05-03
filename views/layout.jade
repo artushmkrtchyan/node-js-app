@@ -1,0 +1,70 @@
+doctype html
+html
+  head
+    title= title
+    include header
+  body
+    nav.navbar.navbar-default
+      .container-fluid
+        // Brand and toggle get grouped for better mobile display
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='/') Home
+        // Collect the nav links, forms, and other content for toggling
+        .collapse.navbar-collapse
+          ul.nav.navbar-nav
+            li.dropdown
+              a.dropdown-toggle(data-toggle='dropdown', aria-expanded='true')
+                | Menu 
+                b.caret
+              ul#w3.dropdown-menu
+                li
+                  a(href='#', tabindex='-1') Menu 1.1
+                li
+                  a(href='#', tabindex='-1') Menu 1.2
+            li
+              a(href='#') Menu 2
+          ul.nav.navbar-nav.navbar-right
+            if currentUser
+              li.dropdown
+                a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                  | #{currentUser.firstName}
+                  span.caret
+                ul.dropdown-menu
+                  li
+                    a(href='/profile') My Profile
+                  li
+                    a(href='/auth/logout') Log Out
+            else
+              li
+                a(href='/auth/login') Log In
+              li
+                a(href='/auth/register') Sign Up
+
+        // /.navbar-collapse
+      // /.container-fluid
+
+    .container
+      .row
+        .col-md-12
+        
+          if (messages && messages.info)
+              .alert.alert-info
+                span= messages.info
+
+          if (messages && messages.error)
+              .alert.alert-danger
+                span= messages.error
+
+          if (messages && messages.success)
+              .alert.alert-success
+                span= messages.success
+
+          block content
+
+    p &nbsp;
+    include footer
