@@ -2,7 +2,7 @@ const multer = require('multer');
 
 const multerStorage = multer.memoryStorage();
 
-const multerFilter = (req, file, cb) => {
+const imagesFilter = (req, file, cb) => {
     if (file.mimetype.startsWith('image')) {
         cb(null, true);
     } else {
@@ -10,12 +10,14 @@ const multerFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({
+const uploadImages = multer({
     storage: multerStorage,
-    fileFilter: multerFilter,
+    fileFilter: imagesFilter,
     limits: {
         fileSize: 4 * 1024 * 1024,
     },
 });
 
-module.exports = upload;
+module.exports = {
+    uploadImages
+};

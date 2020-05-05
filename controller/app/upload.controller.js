@@ -8,10 +8,10 @@ class Upload {
     constructor(name, count) {
         this.name = name;
         this.count = count || 10;
-        this.uploadFiles = upload.array(this.name, this.count);
+        this.uploadImgs = upload.uploadImages.array(this.name, this.count);
 
         this.uploadImages = (req, res, next) => {
-            this.uploadFiles(req, res, (err) => {
+            this.uploadImgs(req, res, (err) => {
                 if (err instanceof multer.MulterError) {
                     if (err.code === 'LIMIT_UNEXPECTED_FILE') {
                         return res.send('Too many files to upload.');
@@ -30,11 +30,8 @@ class Upload {
                 const date = new Date();
                 const year = date.getFullYear();
                 const month = date.getMonth();
-
-                const dir = path.join(
-                    __dirname,
-                    `../public/uploads/${year}/${month}`
-                );
+                const uploadPath = `uploads/${year}/${month}`;
+                const dir = path.join(__dirname, `../../public/${uploadPath}`);
                 req.body[this.name] = [];
 
                 await createNewFolder(dir);
@@ -51,7 +48,7 @@ class Upload {
                             .toFile(`${dir}/${newFilename}`);
 
                         req.body[this.name].push(
-                            `uploads/${year}/${month}/${newFilename}`
+                            `${uploadPath}/${newFilename}`
                         );
                     })
                 );

@@ -8,6 +8,6 @@ block content
                 li #{currentUser.lastName}
                 li #{currentUser.email}
                 li: img(src=`/${currentUser.avatar}`)
-                li: form(action='/users/'+currentUser.id+'/edit' enctype="multipart/form-data" method="post")
+                li: form(action='/profile' enctype="multipart/form-data" method="post")
                     input(type="file" name="avatar")
                     button(type="submit")
