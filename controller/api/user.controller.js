@@ -1,4 +1,32 @@
 const models = require('../../models');
+const utils = require('../../lib/utils');
+
+exports.createUser = (req, res) => {
+    const {
+        firstName,
+        lastName,
+        email,
+        password,
+        description = '',
+        avatar = '',
+    } = req.body;
+    return models.Users.create({
+        firstName,
+        lastName,
+        email,
+        password: utils.generatePassword(password),
+        description,
+        avatar,
+    })
+        .then(async (user) => {
+            user.addRoles(
+                await models.Roles.findOne({ where: { name: 'subscriber' } })
+            );
+            delete user.password;
+            return res.status(200).json({ status: 'ok', user });
+        })
+        .catch((error) => res.status(500).json({ error }));
+};
 
 getUsers = (req, res) => {
     models.Users.findAll({
@@ -62,7 +90,8 @@ getUserById = (req, res) => {
 };
 
 getUserByName = (req, res) => {
-    if (!req.user || !req.user.username) return res.status(401).json({ message: 'Unauthorized' });
+    if (!req.user || !req.user.username)
+        return res.status(401).json({ message: 'Unauthorized' });
     models.Users.findOne({
         where: {
             email: req.user.username,

@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const models = require('../models');
+const utils = require('../lib/utils');
 
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET || 'testSecret';
 
@@ -19,4 +21,47 @@ exports.authenticateToken = (req, res, next) => {
         req.user = user;
         next();
     });
+};
+
+exports.register = async (req, res, next) => {
+    const errors = [];
+    const { firstName, lastName, email, password, confirmPassword } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({
+            status: 400,
+            message: 'firstName, lastName, email, password is required',
+        });
+    }
+
+    if (!utils.isValidateEmail(email)) {
+        errors.push({ status: 422, message: 'Email is not a valid email.' });
+    }
+    if (confirmPassword !== password) {
+        errors.push({
+            status: 226,
+            message: 'Password and password confirmation do not match.',
+        });
+    }
+    if (!utils.validatePassword(password)) {
+        errors.push({
+            status: 225,
+            message:
+                'Input Password and Submit 5 to 20 characters which contain at least one numeric digit, one uppercase and one lowercase letter.',
+        });
+    }
+    if (errors.length) {
+        return res.status(422).json({ errors });
+    }
+    try {
+        const user = await models.Users.findOne({ where: { email } });
+        if (user) {
+            return res
+                .status(422)
+                .json({ status: 409, message: 'Email already exists.' });
+        }
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+    next();
 };

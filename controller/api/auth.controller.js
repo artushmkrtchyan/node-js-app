@@ -2,7 +2,7 @@ const models = require('../../models');
 const utils = require('../../lib/utils');
 const AuthMiddleware = require('../../middlewares/authMiddleware');
 
-login = (req, res, next) => {
+login = (req, res) => {
     const { username, password } = req.body;
     if (!utils.isValidateEmail(username)) {
         return res.status(401).json({ message: 'Email is not a valid email.' });
@@ -32,6 +32,39 @@ login = (req, res, next) => {
         .catch((error) => res.status(500).json({ error }));
 };
 
+register = (req, res, next) => {
+    const {
+        firstName,
+        lastName,
+        email,
+        password,
+        description = '',
+        avatar = '',
+    } = req.body;
+    return models.Users.create({
+        firstName,
+        lastName,
+        email,
+        password: utils.generatePassword(password),
+        description,
+        avatar,
+    })
+        .then(async (user) => {
+            user.addRoles(
+                await models.Roles.findOne({ where: { name: 'subscriber' } })
+            );
+
+            const token = AuthMiddleware.generateAccessToken({
+                username: email,
+                firstName,
+                lastName,
+            });
+            res.json({ token });
+        })
+        .catch((error) => res.status(500).json({ error }));
+};
+
 module.exports = {
     login,
+    register,
 };
