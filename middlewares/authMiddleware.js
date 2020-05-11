@@ -14,10 +14,12 @@ exports.authenticateToken = (req, res, next) => {
         authorization && authorization.split(' ')[0] === 'Bearer'
             ? authorization.split(' ')[1]
             : null;
-    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+    if (!token)
+        return res.status(401).json({ status: 401, message: 'Unauthorized' });
 
     jwt.verify(token, accessTokenSecret, (err, user) => {
-        if (err) return res.status(403).json({ message: 'Forbidden' });
+        if (err)
+            return res.status(403).json({ status: 403, message: 'Forbidden' });
         req.user = user;
         next();
     });

@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const models = require('../../models/index');
 const UserController = require('../../controller/api/user.controller')
+const RoleMiddleware = require('../../middlewares/roleMiddleware');
 
-/* GET users listing. */
+
+router.use(RoleMiddleware.isAdmin)
+
 router.get('/', UserController.getUsers);
 
-/* GET SINGLE user info. */
-router.get('/:userId', UserController.getUserById);
+router.get('/:userId', UserController.checkUserId, UserController.getUserById);
+
+router.put('/:userId', UserController.checkUserId, UserController.editUser)
+
+router.delete('/:userId', UserController.checkUserId, UserController.deleteUser)
 
 module.exports = router;
