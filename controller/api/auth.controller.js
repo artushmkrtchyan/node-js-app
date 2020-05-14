@@ -2,7 +2,7 @@ const models = require('../../models');
 const utils = require('../../lib/utils');
 const AuthMiddleware = require('../../middlewares/authMiddleware');
 
-login = (req, res) => {
+login = (req, res, next) => {
     const { username, password } = req.body;
     if (!utils.isValidateEmail(username)) {
         return res.status(401).json({ message: 'Email is not a valid email.' });
@@ -29,7 +29,7 @@ login = (req, res) => {
             });
             res.json({ token });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
 register = (req, res, next) => {
@@ -61,7 +61,7 @@ register = (req, res, next) => {
             });
             res.json({ token });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
 module.exports = {

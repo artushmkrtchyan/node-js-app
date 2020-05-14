@@ -12,7 +12,7 @@ checkUserId = (req, res, next) => {
     }
 };
 
-createUser = (req, res) => {
+createUser = (req, res, next) => {
     const {
         firstName,
         lastName,
@@ -36,10 +36,10 @@ createUser = (req, res) => {
             delete user.password;
             return res.status(200).json({ status: 'ok', user });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
-editUser = (req, res) => {
+editUser = (req, res, next) => {
     models.Users.findByPk(req.params.userId)
         .then((user) => {
             if (user) {
@@ -68,10 +68,10 @@ editUser = (req, res) => {
                     .json({ status: 404, message: 'User not found' });
             }
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
-deleteUser = (req, res) => {
+deleteUser = (req, res, next) => {
     models.Users.findByPk(req.params.userId)
         .then((user) => {
             if (user) {
@@ -87,10 +87,10 @@ deleteUser = (req, res) => {
         .then(() => {
             return res.status(200).json({ status: 'ok', message: 'Deleted' });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
-getUsers = (req, res) => {
+getUsers = (req, res, next) => {
     models.Users.findAll({
         limit: 10,
         offset: 0,
@@ -103,7 +103,7 @@ getUsers = (req, res) => {
         },
     })
         .then((users) => res.status(200).json({ status: 'ok', data: users }))
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
 // getUserById = async (req, res) => {
@@ -122,7 +122,7 @@ getUsers = (req, res) => {
 //         return res.status(500).json({error});
 //     }
 // };
-getUserById = (req, res) => {
+getUserById = (req, res, next) => {
     models.Users.findByPk(req.params.userId, {
         include: {
             model: models.Roles,
@@ -136,12 +136,14 @@ getUserById = (req, res) => {
             if (user) {
                 return res.status(200).json(user);
             }
-            return res.status(404).json({ status: 404, message: 'user not found' });
+            return res
+                .status(404)
+                .json({ status: 404, message: 'user not found' });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
-getUserByName = (req, res) => {
+getUserByName = (req, res, next) => {
     if (!req.user || !req.user.username)
         return res.status(401).json({ status: 401, message: 'Unauthorized' });
     models.Users.findOne({
@@ -163,7 +165,7 @@ getUserByName = (req, res) => {
                     .json({ status: 401, message: 'Incorrect user name' });
             return res.json({ status: 'ok', user });
         })
-        .catch((error) => res.status(500).json({ error }));
+        .catch((error) => next(error));
 };
 
 module.exports = {
