@@ -6,6 +6,10 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+if (typeof fetch !== 'function') {
+    global.fetch = require('node-fetch');
+}
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');

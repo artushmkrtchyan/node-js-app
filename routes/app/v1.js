@@ -4,6 +4,7 @@ app.use(flash());
 
 app.use('/', require('./index'));
 app.use('/auth', require('./auth'));
+app.use('/html', require('./html'));
 app.use(
     '/profile',
     (req, res, next) => {
