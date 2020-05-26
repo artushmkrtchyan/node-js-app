@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat HTML</title>
+        <link rel="stylesheet" href="/css/style.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+        />
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css"
+        />
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+        <script>
+            $(function () {
+                $('#header').load('../html/header.html');
+                $('#footer').load('../html/footer.html');
+            });
+        </script>
+    </head>
+    <body>
+        <div id="header"></div>
+        <div class="jumbotron" style="padding: 40px;">
+            <ul id="messages"></ul>
+            <form id="form">
+                <input type="text" name="message" id="message" />
+                <input type="submit" value="send" />
+            </form>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    $(function () {
+        const socket = io();
+        $('#form').submit(function () {
+            socket.emit('chat message', $('#message').val());
+            $('#message').val('');
+            return false;
+        });
+        socket.on('chat message', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+            window.scrollTo(0, document.body.scrollHeight);
+        });
+    });
+</script>

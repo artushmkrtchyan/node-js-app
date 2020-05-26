@@ -3,8 +3,9 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-
+const io = require('socket.io')();
 const app = express();
+app.io = io;
 
 if (typeof fetch !== 'function') {
     global.fetch = require('node-fetch');
@@ -21,6 +22,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 console.log(' * * * STARTING * * * \n\n');
+
+//add socket.io in request
+app.use(function (req, res, next) {
+    req.io = app.io;
+    next();
+});
 
 // API routes - versioned!
 const API_VERSIONS = ['v1'];
